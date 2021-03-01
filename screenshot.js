@@ -42,7 +42,14 @@ async function getScreenShot(url, size){
     deviceScaleFactor: 2,
   });
   await page.goto(url, {waitUntil: 'networkidle2'}); // can also try networkidle0
+
+  // Delay for page to lazy load stuff - combine this with "headless: true" to click away modals
   // await page.waitFor(1000);
+
+  // For full page length screenshot, reset browser height to page height
+  // const bodyHeight = await page.evaluate(() => document.body.scrollHeight);
+  // await page.setViewport({ width: size.width, height: bodyHeight })
+
   const parsed = nodeurl.parse(page._target._targetInfo.url);
   const fileName = `${parsed.host}-${page._viewport.width}`;
   await page.screenshot({path: `export/${fileName}.png`});
