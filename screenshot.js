@@ -1,6 +1,5 @@
 const puppeteer = require('puppeteer-core');
 const fs = require('fs');
-
 const urls = fs.readFileSync('urls.txt').toString().split("\n");
 
 const sizes = [
@@ -33,7 +32,6 @@ async function getUrlSizes(devices, urls) {
 getUrlSizes(sizes, urls);
 
 async function getScreenShot(url, size){
-  const nodeurl = require("url");
   const browser = await puppeteer.launch({
     executablePath: '/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome',
     headless: false
@@ -47,14 +45,17 @@ async function getScreenShot(url, size){
   await page.goto(url, {waitUntil: 'networkidle2'}); // can also try networkidle0
 
   // Delay for page to lazy load stuff - combine this with "headless: false" to click away modals
-  await page.waitFor(10000);
+  await page.waitForTimeout(5000);
 
   // For full page length screenshot, reset browser height to page height
   // const bodyHeight = await page.evaluate(() => document.body.scrollHeight);
   // await page.setViewport({ width: size.width, height: bodyHeight })
 
-  const parsed = nodeurl.parse(page._target._targetInfo.url);
-  const fileName = `${parsed.host}-${page._viewport.width}_${count}`;
-  await page.screenshot({path: `export/${fileName}.png`});
+  const thisURL = new URL(page.url()).hostname;
+  const fileName = `${thisURL}-${size.width}_${count}`;
+  await page.screenshot({
+    path: `export/${fileName}.png`    
+  });
+
   await browser.close();
 }
