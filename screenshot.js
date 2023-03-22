@@ -34,27 +34,35 @@ getUrlSizes(sizes, urls);
 async function getScreenShot(url, size){
   const browser = await puppeteer.launch({
     executablePath: '/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome',
-    headless: false
+    headless: true
   });
+
   const page = await browser.newPage();
     await page.setViewport({
     width: size.width,
     height: size.height,
     deviceScaleFactor: 2,
   });
+
   await page.goto(url, {waitUntil: 'networkidle2'}); // can also try networkidle0
 
   // Delay for page to lazy load stuff - combine this with "headless: false" to click away modals
-  await page.waitForTimeout(5000);
+  await page.waitForTimeout(2000);
 
   // For full page length screenshot, reset browser height to page height
+  // OR use fullPage option below
   // const bodyHeight = await page.evaluate(() => document.body.scrollHeight);
-  // await page.setViewport({ width: size.width, height: bodyHeight })
+  // await page.setViewport({
+  //   width: size.width,
+  //   height: bodyHeight,
+  //   deviceScaleFactor: 2
+  // })
 
   const thisURL = new URL(page.url()).hostname;
-  const fileName = `${thisURL}-${size.width}_${count}`;
+  const fileName = `${thisURL}-${size.width}_${count.toString().padStart(2, '0')}`;
   await page.screenshot({
-    path: `export/${fileName}.png`    
+    path: `export/${fileName}.png`,
+    fullPage: true
   });
 
   await browser.close();
