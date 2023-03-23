@@ -4,7 +4,7 @@ This script uses [Puppeteer](https://pptr.dev/) to get multiple size screenshots
 `npm install`
 
 ## Run
-- Add each URL as a new line in urls.txt
+- Add each URL as a new line in `urls.txt`
 - Browser sizes can be edited in `screenshot.js`
 - `npm run screenshot`
 - Screenshots will be saved to the `/export` folder.
